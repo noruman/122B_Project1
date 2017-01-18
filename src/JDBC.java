@@ -1,4 +1,4 @@
-package p1;
+
 
 //JDBC Test Program - Project 1 Environment Setup
 
@@ -157,15 +157,32 @@ public class JDBC {
     
     //Insert a new star into the database
     public static void insertStar(Connection connection, Scanner s) {
-        System.out.print("Insert star's last name or only name (required): ");
-        String last_name = s.nextLine();
+    	String last_name = null;
+    	String first_name = null;
+    	String date = null;
+    	Date dob = null;
+    	
+    	while (true) {
+    		System.out.print("Insert star's last name or only name (required): ");
+            last_name = s.nextLine();
+            if (!last_name.equals("")) {
+            	break;
+            }
+    	}
         System.out.print("Insert star's first name (optional): ");
-        String first_name = s.nextLine();
-        System.out.print("Insert star's date of birth yyyy-mm-dd (optional): ");
-        String date = s.nextLine();
-        Date dob = null;
-        if (!date.equals("")) {
-            dob = Date.valueOf(s.nextLine());
+        first_name = s.nextLine();
+        while (true) {
+        	System.out.print("Insert star's date of birth yyyy-mm-dd (optional): ");
+            date = s.nextLine();
+            if (!date.equals("")) {
+            	try {
+            		dob = Date.valueOf(date);
+                    break;
+            	}
+                catch (IllegalArgumentException e) {
+                	System.out.println("Wrong date format");
+                }
+            }
         }
         System.out.print("Insert star's photo url (optional): ");
         String photo_url = s.nextLine();
