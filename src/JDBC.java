@@ -205,6 +205,79 @@ public class JDBC {
     
     //Insert a customer into the database
     public static void insertCustomer(Connection connection, Scanner s) {
+        String first_name = null;
+    	String last_name = null;
+        String cc_id = null; //query creditCards
+        String address = null;
+        String email = null;
+        String password = null;
+        
+        while (true) {
+    		System.out.print("Enter customer's last name or only name (required): ");
+            last_name = s.nextLine();
+            if (!last_name.equals("")) {
+            	break;
+            }
+    	}
+        while (true) {
+        	System.out.print("Enter customer's first name (optional): ");
+        	first_name = s.nextLine();
+        	if (!first_name.equals("")) {
+            	break;
+            }
+        }
+    	while (true) {
+    		System.out.println("Enter customer's permanent address (required): ");
+    		address = s.nextLine();
+    		if (!address.equals("")) {
+    			break;
+    		}
+    	}
+    	while (true) {
+    		System.out.println("Enter customer's email address (required): ");
+    		email = s.nextLine();
+    		if (!email.equals("")) {
+    			break;
+    		}
+    	}
+    	while (true) {
+    		System.out.println("Enter password (required): ");
+    		password = s.nextLine();
+    		if (!password.equals("")) {
+    			break;
+    		}
+    	}
+        
+        Statement select;
+        ResultSet result;
+        
+        try {
+        	select = connection.createStatement();
+        	result = select.executeQuery("SELECT * FROM creditcards WHERE last_name = '" + last_name + "' and first_name = '" + first_name + "'");
+        	if (result == null) {
+        		System.out.println("No Valid Bank Record for customer last name: " + last_name + "\nCannot Add to Database");
+        		return;
+        	}
+        	
+        	while (result.next()) {
+        		cc_id = result.getString(1);
+        		System.out.println("cc_id: " + cc_id);
+        	}
+            
+        	String sqlQuery = "INSERT INTO CUSTOMERS (first_name, last_name, cc_id, address, email, password) VALUES (?, ?, ?, ?, ?, ?)";
+        	PreparedStatement preparedStmt = connection.prepareStatement(sqlQuery);
+        	preparedStmt.setString(1, first_name);
+        	preparedStmt.setString(2, last_name);
+        	preparedStmt.setString(3, cc_id);
+        	preparedStmt.setString(4, address);
+        	preparedStmt.setString(5, email);
+        	preparedStmt.setString(6, password);
+        	preparedStmt.execute();
+ 
+        	System.out.println("Customer Added to the Database!");
+        } catch (SQLException e) {
+        	e.printStackTrace();
+        }      
         
     }
     
