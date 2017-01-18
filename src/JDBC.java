@@ -1,10 +1,10 @@
-
-
 //JDBC Test Program - Project 1 Environment Setup
 
 import java.sql.*;			//Enables SQL Processing
 import java.sql.Date;
 import java.util.*;			//For Scanner Class
+
+import com.mysql.jdbc.ResultSetMetaData;
 
 
 public class JDBC {
@@ -36,11 +36,10 @@ public class JDBC {
         System.out.print("Password: "); 			//NOTE: password visible in console
         password = s.nextLine();
         
-        while (active) {
-            
-            
-            //Incorporate MySQL Driver
-            try {
+        while(active){
+            try{
+                //Incorporate MySQL Driver
+                
                 Class.forName("com.mysql.jdbc.Driver").newInstance();
                 
                 //Connect to Database
@@ -48,47 +47,49 @@ public class JDBC {
                 Connection connection = DriverManager.getConnection("jdbc:mysql:///moviedb?autoReconnect=true&useSSL=false", username, password);
                 System.out.println("Connected!");
                 System.out.println();
-                System.out.println("Please select an option:");
-                printMenu();
-                System.out.print("Option: ");
-                command = s.nextInt();
-                s.nextLine();					//clear buffer
                 
-                switch (command) {
-                    case 1:				//print movies for a given star
-                        printMovie(connection, s);
-                        break;
-                    case 2:				//insert new star
-                        insertStar(connection, s);
-                        break;
-                    case 3:				//insert new customer
-                        insertCustomer(connection, s);
-                        break;
-                    case 4:				//delete customer
-                        deleteCustomer(connection, s);
-                        break;
-                    case 5:				//print metadata
-                        printMetadata(connection, s);
-                        break;
-                    case 6:				//enter valid command
-                        executeSqlQuery(connection, s);
-                        break;
-                    case 7:				//exit to log in
-                        break;
-                    case 8:				//exit program
-                        System.out.println("Bye!");
-                        return;
-                    default:
-                        
+                while(active){
+                    System.out.println("Please select an option:");
+                    printMenu();
+                    System.out.print("Option: ");
+                    command = s.nextInt();
+                    s.nextLine();					//clear buffer
+                    
+                    switch (command) {
+                        case 1:				//print movies for a given star
+                            printMovie(connection, s);
+                            break;
+                        case 2:				//insert new star
+                            insertStar(connection, s);
+                            break;
+                        case 3:				//insert new customer
+                            insertCustomer(connection, s);
+                            break;
+                        case 4:				//delete customer
+                            deleteCustomer(connection, s);
+                            break;
+                        case 5:				//print metadata
+                            printMetadata(connection, s);
+                            break;
+                        case 6:				//enter valid command
+                            executeSqlQuery(connection, s);
+                            break;
+                        case 7:				//exit to log in
+                            break;
+                        case 8:				//exit program
+                            System.out.println("Bye!");
+                            connection.close();
+                            s.close();
+                            return;
+                        default:
+                    }
                 }
-                
             } catch (Exception e){
                 System.out.println("Connection Failed! Incorrect Username or Password.");
                 System.out.println(e.toString());
                 System.out.println("Try Again.");
             }
         }
-        s.close();
     }
     
     //Create and execute an SQL statement to select all the movies for a given star
@@ -157,30 +158,30 @@ public class JDBC {
     
     //Insert a new star into the database
     public static void insertStar(Connection connection, Scanner s) {
-    	String last_name = null;
-    	String first_name = null;
-    	String date = null;
-    	Date dob = null;
-    	
-    	while (true) {
-    		System.out.print("Insert star's last name or only name (required): ");
+        String last_name = null;
+        String first_name = null;
+        String date = null;
+        Date dob = null;
+        
+        while (true) {
+            System.out.print("Insert star's last name or only name (required): ");
             last_name = s.nextLine();
             if (!last_name.equals("")) {
-            	break;
+                break;
             }
-    	}
+        }
         System.out.print("Insert star's first name (optional): ");
         first_name = s.nextLine();
         while (true) {
-        	System.out.print("Insert star's date of birth yyyy-mm-dd (optional): ");
+            System.out.print("Insert star's date of birth yyyy-mm-dd (optional): ");
             date = s.nextLine();
             if (!date.equals("")) {
-            	try {
-            		dob = Date.valueOf(date);
+                try {
+                    dob = Date.valueOf(date);
                     break;
-            	}
+                }
                 catch (IllegalArgumentException e) {
-                	System.out.println("Wrong date format");
+                    System.out.println("Wrong date format");
                 }
             }
         }
@@ -206,78 +207,78 @@ public class JDBC {
     //Insert a customer into the database
     public static void insertCustomer(Connection connection, Scanner s) {
         String first_name = null;
-    	String last_name = null;
+        String last_name = null;
         String cc_id = null; //query creditCards
         String address = null;
         String email = null;
         String password = null;
         
         while (true) {
-    		System.out.print("Enter customer's last name or only name (required): ");
+            System.out.print("Enter customer's last name or only name (required): ");
             last_name = s.nextLine();
             if (!last_name.equals("")) {
-            	break;
-            }
-    	}
-        while (true) {
-        	System.out.print("Enter customer's first name (optional): ");
-        	first_name = s.nextLine();
-        	if (!first_name.equals("")) {
-            	break;
+                break;
             }
         }
-    	while (true) {
-    		System.out.println("Enter customer's permanent address (required): ");
-    		address = s.nextLine();
-    		if (!address.equals("")) {
-    			break;
-    		}
-    	}
-    	while (true) {
-    		System.out.println("Enter customer's email address (required): ");
-    		email = s.nextLine();
-    		if (!email.equals("")) {
-    			break;
-    		}
-    	}
-    	while (true) {
-    		System.out.println("Enter password (required): ");
-    		password = s.nextLine();
-    		if (!password.equals("")) {
-    			break;
-    		}
-    	}
+        while (true) {
+            System.out.print("Enter customer's first name (optional): ");
+            first_name = s.nextLine();
+            if (!first_name.equals("")) {
+                break;
+            }
+        }
+        while (true) {
+            System.out.println("Enter customer's permanent address (required): ");
+            address = s.nextLine();
+            if (!address.equals("")) {
+                break;
+            }
+        }
+        while (true) {
+            System.out.println("Enter customer's email address (required): ");
+            email = s.nextLine();
+            if (!email.equals("")) {
+                break;
+            }
+        }
+        while (true) {
+            System.out.println("Enter password (required): ");
+            password = s.nextLine();
+            if (!password.equals("")) {
+                break;
+            }
+        }
         
         Statement select;
         ResultSet result;
         
         try {
-        	select = connection.createStatement();
-        	result = select.executeQuery("SELECT * FROM creditcards WHERE last_name = '" + last_name + "' and first_name = '" + first_name + "'");
-        	if (result == null) {
-        		System.out.println("No Valid Bank Record for customer last name: " + last_name + "\nCannot Add to Database");
-        		return;
-        	}
-        	
-        	while (result.next()) {
-        		cc_id = result.getString(1);
-        		System.out.println("cc_id: " + cc_id);
-        	}
+            select = connection.createStatement();
+            result = select.executeQuery("SELECT * FROM creditcards WHERE last_name = '" + last_name + "' and first_name = '" + first_name + "'");
+            if (result == null) {
+                System.out.println("No Valid Bank Record for customer last name: " + last_name + "\nCannot Add to Database");
+                return;
+            }
             
-        	String sqlQuery = "INSERT INTO CUSTOMERS (first_name, last_name, cc_id, address, email, password) VALUES (?, ?, ?, ?, ?, ?)";
-        	PreparedStatement preparedStmt = connection.prepareStatement(sqlQuery);
-        	preparedStmt.setString(1, first_name);
-        	preparedStmt.setString(2, last_name);
-        	preparedStmt.setString(3, cc_id);
-        	preparedStmt.setString(4, address);
-        	preparedStmt.setString(5, email);
-        	preparedStmt.setString(6, password);
-        	preparedStmt.execute();
- 
-        	System.out.println("Customer Added to the Database!");
+            while (result.next()) {
+                cc_id = result.getString(1);
+                System.out.println("cc_id: " + cc_id);
+            }
+            
+            String sqlQuery = "INSERT INTO CUSTOMERS (first_name, last_name, cc_id, address, email, password) VALUES (?, ?, ?, ?, ?, ?)";
+            PreparedStatement preparedStmt = connection.prepareStatement(sqlQuery);
+            preparedStmt.setString(1, first_name);
+            preparedStmt.setString(2, last_name);
+            preparedStmt.setString(3, cc_id);
+            preparedStmt.setString(4, address);
+            preparedStmt.setString(5, email);
+            preparedStmt.setString(6, password);
+            preparedStmt.execute();
+            
+            System.out.println("Customer Added to the Database!");
         } catch (SQLException e) {
-        	e.printStackTrace();
-        }      
+            e.printStackTrace();
+        }
         
     }
     
@@ -297,31 +298,77 @@ public class JDBC {
     
     //Provide the metadata of the database
     private static void printMetadata(Connection connection, Scanner s) {
-    	DatabaseMetaData md;
-		try {
-			md = connection.getMetaData();
-			ResultSet rs = md.getTables(null, null, "%", null);
-			System.out.println();
-			System.out.println("--------------------");
-			System.out.println("------METADATA------");
-			System.out.println("--------------------");
-	    	while (rs.next()) {
-	    		System.out.println("TABLE: " + rs.getString(3));
-	    		ResultSet rsColumns = md.getColumns(null, null, rs.getString(3), null);
-	    		while (rsColumns.next()) {
-	    			System.out.println("	" + rsColumns.getString("TYPE_NAME") + ": " + rsColumns.getString("COLUMN_NAME"));
-	    		}
-	    		System.out.println();
-	    	}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        DatabaseMetaData md;
+        try {
+            md = connection.getMetaData();
+            ResultSet rs = md.getTables(null, null, "%", null);
+            System.out.println();
+            System.out.println("--------------------");
+            System.out.println("------METADATA------");
+            System.out.println("--------------------");
+            while (rs.next()) {
+                System.out.println("TABLE: " + rs.getString(3));
+                ResultSet rsColumns = md.getColumns(null, null, rs.getString(3), null);
+                while (rsColumns.next()) {
+                    System.out.println("	" + rsColumns.getString("TYPE_NAME") + ": " + rsColumns.getString("COLUMN_NAME"));
+                }
+                System.out.println();
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
     
     //Enter a valid SELECT/UPDATE/INSERT/DELETE SQL command
     private static void executeSqlQuery(Connection connection, Scanner s) {
         // TODO Auto-generated method stub
+        Statement state;
+        ResultSet result;
+        ResultSetMetaData meta;
+        try {
+            state = connection.createStatement();
+            
+            System.out.print("\nInput a (SELECT, UPDATE, INSERT or DELETE) SQL query: ");
+            String query = s.nextLine();
+            
+            switch(query.split("\\s")[0].toUpperCase()){
+                case "SELECT":
+                    result = state.executeQuery(query);
+                    meta = (ResultSetMetaData) result.getMetaData();
+                    System.out.println();
+                    while(result.next()){
+                        for(int i = 1; i <= meta.getColumnCount(); i++){
+                            System.out.print(meta.getColumnName(i) + ": ");
+                            switch(meta.getColumnTypeName(i)){
+                                case "VARCHAR":
+                                case "DATE":
+                                    System.out.println(result.getString(i));
+                                    break;
+                                case "INT":
+                                    System.out.println(result.getInt(i));
+                                    break;
+                            }
+                        } 
+                        System.out.println();
+                    }
+                    break;
+                case "INSERT":
+                case "DELETE":
+                case "UPDATE":
+                    state.executeUpdate(query);
+                    System.out.println("Query OK, " + state.getUpdateCount() + " row(s) affected.\n");
+                    break;
+                default:
+                    System.out.println("Invalid sql query.\n");
+                    break;
+            }
+            
+            
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            System.out.println("\nYou have an error in your SQL syntax.\n");
+        }
         
     }
 }
