@@ -224,8 +224,26 @@ public class JDBC {
     
     //Provide the metadata of the database
     private static void printMetadata(Connection connection, Scanner s) {
-        // TODO Auto-generated method stub
-        
+    	DatabaseMetaData md;
+		try {
+			md = connection.getMetaData();
+			ResultSet rs = md.getTables(null, null, "%", null);
+			System.out.println();
+			System.out.println("--------------------");
+			System.out.println("------METADATA------");
+			System.out.println("--------------------");
+	    	while (rs.next()) {
+	    		System.out.println("TABLE: " + rs.getString(3));
+	    		ResultSet rsColumns = md.getColumns(null, null, rs.getString(3), null);
+	    		while (rsColumns.next()) {
+	    			System.out.println("	" + rsColumns.getString("TYPE_NAME") + ": " + rsColumns.getString("COLUMN_NAME"));
+	    		}
+	    		System.out.println();
+	    	}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     //Enter a valid SELECT/UPDATE/INSERT/DELETE SQL command
